@@ -4,9 +4,11 @@ import { encryptData, saveDataToFile, inputData, decryptData } from './util';
 import { promises as fs } from 'fs';
 import path from 'path';
 import cors from 'cors';
+import dotenv from 'dotenv';
 
 const app = express();
-const PORT: number = 3001;
+dotenv.config();
+const PORT = process.env.PORT;
 // Middlwears //
 app.use(cors());
 app.use(bodyParser.json());
