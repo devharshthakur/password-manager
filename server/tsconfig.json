@@ -9,7 +9,7 @@
     "types": ["node"]
   },
   "include": [
-    "src/**/*.ts","utilities/**/*.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules","dist"

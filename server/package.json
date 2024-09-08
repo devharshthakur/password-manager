@@ -1,12 +1,14 @@
 {
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "crypto-js": "^4.2.0",
     "dotenv": "^16.4.5",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "mongoose": "^8.6.1"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.17",
     "@types/crypto-js": "^4.2.2",
@@ -17,7 +19,8 @@
     "typescript": "^5.3.3"
   },
   "scripts": {
+    "build": "tsc",
     "start": "tsc && node ./dist/server.js",
-    "prettier": "prettier --write \"**/*.ts\""
+    "format": "prettier --write \"**/*.ts\""
   }
 }

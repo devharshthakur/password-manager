@@ -1,12 +1,7 @@
 import { promises as fs } from 'fs';
 import CryptoJs from 'crypto-js';
 import dotenv from 'dotenv';
-
-export interface inputData {
-  label: string;
-  encryptedUsername: string;
-  encryptedPassword: string;
-}
+import { inputData } from './util/types/types';
 
 /* Helper Functions */
 export const encryptData = (text: string): string => {

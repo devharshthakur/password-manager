@@ -14,58 +14,62 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
-const util_1 = require("./util");
-const fs_1 = require("fs");
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const app = (0, express_1.default)();
+const mongoose_1 = __importDefault(require("mongoose"));
+const User_1 = __importDefault(require("./models/User"));
 dotenv_1.default.config();
-const PORT = process.env.PORT;
+const app = (0, express_1.default)();
+const PORT = process.env.PORT || 5000;
 // Middlwears //
 app.use((0, cors_1.default)());
 app.use(body_parser_1.default.json());
+// MongoDB Connection
+const MONGO_URI = process.env.MONGO_URI || 'my-default-mongo-uri';
+mongoose_1.default
+    .connect(MONGO_URI)
+    .then(() => console.log('MongoDB connected'))
+    .catch((err) => console.error('MongoDB Connection Error:', err));
+// Add new data to MongoDB
 app.post('/add', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { label, username, password } = req.body;
-    const data = {
-        label,
-        encryptedUsername: (0, util_1.encryptData)(username),
-        encryptedPassword: (0, util_1.encryptData)(password),
-    };
     try {
-        yield (0, util_1.saveDataToFile)(data);
-        res.status(200).send('Data Saved Successfully');
+        // create and save the user in MongoDB
+        const newUser = new User_1.default({ label, username, password });
+        yield newUser.save();
+        res.status(200).send(`Data Saved Successfully to MongoDB`);
     }
-    catch (error) {
+    catch (err) {
+        const error = err;
+        if (error.code === 11000) {
+            return res.status(400).send('Label already exits');
+        }
         res.status(500).send(`Error saving the data: ${error.message}`);
     }
 }));
 app.post('/search', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { label } = req.body;
     if (!label) {
-        res.status(400).send('Label is Required');
+        return res.status(400).send('Label is Required');
     }
-    const filePath = './data/data.json';
     try {
-        const data = yield fs_1.promises.readFile(filePath, { encoding: 'utf-8' });
-        const passwords = JSON.parse(data);
-        // Find the entry with the given label
-        const entry = passwords.find((entry) => entry.label === label);
+        // Find entry label in MongoDB
+        const entry = yield User_1.default.findOne({ label });
         if (!entry) {
             return res.status(404).send('Label not found');
         }
-        // Decrypt the username and paswword
-        const decryptedUsername = (0, util_1.decryptData)(entry.encryptedUsername);
-        const decryptedPassword = (0, util_1.decryptData)(entry.encryptedPassword);
-        // Return the decrypted username and password
+        // Decrypt the username and passwordusing model methods
+        const decryptedUsername = entry.getDecryptedUsername();
+        const decryptedPassword = entry.getDecryptedPassword();
+        // Return the decrypted username and passsword
         res.json({
             username: decryptedUsername,
             password: decryptedPassword,
         });
     }
-    catch (error) {
-        res
-            .status(500)
-            .send(`Error retriving the data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    catch (err) {
+        const error = err;
+        res.status(500).send(`Error retriving the data: ${error.message}`);
     }
 }));
 app.listen(PORT, () => {
