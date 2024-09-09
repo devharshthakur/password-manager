@@ -1,5 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { decryptData, encryptData } from '../util/encryptionUtil';
+import mongoose, { Schema, Document } from "mongoose";
+import { decryptData } from "../util/encryptionUtil";
 
 export interface IUser extends Document {
   label: string;
@@ -19,29 +19,12 @@ const UserSchema: Schema<IUser> = new mongoose.Schema({
   },
   encryptedUsername: {
     type: String,
-    default:''
+    required: true,
   },
   encryptedPassword: {
     type: String,
-    default:''
+    required: true,
   },
-});
-// Password hashing middleware
-/* 
- It checks wheather the password is modified or not ,
- if yes then it will go for hashing otherwise not.
-*/
-UserSchema.pre<IUser>('save', function (next) {
-  if (this.isModified('username')) {
-    this.encryptedUsername = encryptData(this.username!);
-    this.username = undefined; // Remove plaintext username
-  }
-
-  if (this.isModified('password')) {
-    this.encryptedPassword = encryptData(this.password!);
-    this.password = undefined; // Remove plaintext password
-  }
-  next();
 });
 
 // Methods to decrypt data
@@ -53,5 +36,5 @@ UserSchema.methods.getDecryptedPassword = function () {
   return decryptData(this.encryptedPassword);
 };
 
-const User = mongoose.model<IUser>('User', UserSchema);
+const User = mongoose.model<IUser>("User", UserSchema);
 export default User;
