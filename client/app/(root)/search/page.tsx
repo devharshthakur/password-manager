@@ -1,6 +1,7 @@
 /* ------------------------------------------------ Search Page ------------------------------------------------ */
 "use client";
 import HeaderComponent from "@/components/header";
+import axios from "axios";
 import {
   Banner,
   Button,
@@ -25,18 +26,17 @@ const SearchComponent = (): JSX.Element => {
     }
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/search`,
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/search`, // call the backend api
+        { label },
         {
-          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ label }),
         },
       );
 
-      const data = await response.json();
+      const data = await response.data;
 
       if (response.status === 200) {
         setSearchResult(
@@ -47,9 +47,10 @@ const SearchComponent = (): JSX.Element => {
         throw new Error(data.message || "Error Fetching the data");
       }
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-        setSearchResult("");
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data);
+        setError("Error fetching data");
+        setSearchResult(""); // clear the search result on error
       }
     }
   };
@@ -59,7 +60,10 @@ const SearchComponent = (): JSX.Element => {
       <HeaderComponent />
       {/* Main Section */}
       <div className="flex h-screen justify-center items-center bg-gray-50">
-        <form className="w-full max-w-lg p-8 space-y-6 bg-white rounded-lg shadow-md" onSubmit={handleSearch}>
+        <form
+          className="w-full max-w-lg p-8 space-y-6 bg-white rounded-lg shadow-md"
+          onSubmit={handleSearch}
+        >
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900">Search</h2>
             <p className="text-gray-500">Enter your label below</p>

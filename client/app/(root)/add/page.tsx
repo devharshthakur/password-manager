@@ -5,11 +5,14 @@ import { Checkbox, TextInput, Label, Button, Banner } from "flowbite-react";
 import { FaSun } from "react-icons/fa";
 import Link from "next/link";
 import HeaderComponent from "@/components/header";
+import axios from "axios";
 
 const AddPage = (): JSX.Element => {
   const [label, setLabel] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleLabel = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLabel(e.target.value);
@@ -26,31 +29,26 @@ const AddPage = (): JSX.Element => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const input = { label, username, password };
+
     try {
-      const result = await addData(input);
-      console.log(result);
+      const result = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/add`, // call the backend api
+        input,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+      console.log(result.data);
+      setSuccess("Information added sucessfully");
+      setError("");
     } catch (error) {
-      console.error("Error:", error);
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data || "Error adding data");
+        setSuccess("");
+      }
     }
-  };
-
-  const addData = async (data: {
-    label: string;
-    username: string;
-    password: string;
-  }) => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/add`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return response.json();
   };
 
   return (
@@ -114,6 +112,8 @@ const AddPage = (): JSX.Element => {
             </Label>
           </div>
           <Button type="submit">Add the information</Button>
+          {error && <div className="text-red-500">{error}</div>}
+          {success && <div className="text-green-500">{success}</div>}
         </form>
       </div>
     </>
