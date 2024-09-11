@@ -36,7 +36,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 // MongoDB Connection
-const MONGO_URI = process.env.MONGO_URI || "my-default-mongo-uri";
+const MONGO_URI = "mongodb+srv://harshprojects2002:harsh2002@password-manager.nqmmp.mongodb.net/";
 mongoose
   .connect(MONGO_URI)
   .then(() => console.log("MongoDB connected"))
