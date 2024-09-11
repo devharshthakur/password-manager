@@ -5,8 +5,7 @@ We use the aes-256-cbc algorithm, which is AES with a 256-bit key in CBC mode.
 AES-256 is one of the most secure encryption methods available.
 */
 const algorithm = "aes-256-cbc";
-const secretKey =
-  "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+const secretKey = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 /**
  IV is a random value added to the encryption process 
  to make sure that the same data encrypted multiple times results in different outputs. 

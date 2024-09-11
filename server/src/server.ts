@@ -7,6 +7,7 @@ import { ErrorType } from "./util/types/types";
 import User from "./models/User";
 import { encryptUserData } from "./middlewares/encryptionMiddleware";
 import { log } from "console";
+import connectDB from "./util/connectDB";
 
 dotenv.config();
 
@@ -36,11 +37,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 // MongoDB Connection
-const MONGO_URI = "mongodb+srv://harshprojects2002:harsh2002@password-manager.nqmmp.mongodb.net/";
-mongoose
-  .connect(MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB Connection Error:", err));
+connectDB();
 
 // Add new data to MongoDB
 app.post("/add", encryptUserData, async (req: Request, res: Response) => {

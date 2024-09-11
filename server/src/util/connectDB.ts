@@ -1,7 +1,7 @@
 // Use to connect to mongo db database
 import mongoose from "mongoose";
 
-const MONGO_URI = process.env.MONGO_URI || "your-default-mongo-uri";
+const MONGO_URI = "mongodb+srv://harshprojects2002:harsh2002@password-manager.nqmmp.mongodb.net/";
 
 const connectDB = async () => {
   try {
