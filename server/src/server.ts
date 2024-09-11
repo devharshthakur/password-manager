@@ -14,24 +14,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enables CORS support 
-const allowedOrigins = [
-  'http://localhost:3000', // Localhost
-  'https://password-manager-96b7xs68u-harsh-thakurs-projects.vercel.app/', // Replace with your Vercel domain
-];
-
-const corsOptions = {
-  origin: function (origin: any, callback: any) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-};
-
 // Enable CORS
-app.use(cors(corsOptions));
+app.use(cors({origin:'*'}));
 
 // Middlwears //
 app.use(bodyParser.json());
