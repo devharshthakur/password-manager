@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 // Enables CORS support 
 const allowedOrigins = [
   'http://localhost:3000', // Localhost
-  'https://password-manager-coral-two.vercel.app/', // Replace with your Vercel domain
+  'https://password-manager-96b7xs68u-harsh-thakurs-projects.vercel.app/', // Replace with your Vercel domain
 ];
 
 const corsOptions = {
